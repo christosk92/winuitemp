@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl x:Class="Wavee.UI.WinUI.Controls.AudioItemControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Wavee.UI.WinUI.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="using:Wavee.Models"
+             xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
+             xmlns:media="using:CommunityToolkit.WinUI.UI.Media"
+             xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+             xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+             xmlns:behaviors="using:CommunityToolkit.WinUI.UI.Behaviors"
+             DataContext="{x:Bind }"
+             mc:Ignorable="d">
+
+    <StackPanel MinHeight="130"
+                MinWidth="100"
+                VerticalAlignment="Stretch"
+                Margin="0,0,12,0">
+        <Grid>
+            <Image Margin="2"
+                   Source="ms-appx:///Assets/AlbumPlaceholder.png" />
+            <Border x:Name="NormalImage"
+                    x:Load="{x:Bind Invert(IsArtist)}">
+                <Image HorizontalAlignment="Stretch"
+                       Opacity="1"
+                       x:Name="NormalAlbumImage" 
+                       VerticalAlignment="Stretch"
+                       Stretch="Uniform">
+                    <Image.Source>
+                        <BitmapImage UriSource="{Binding Image,Mode=OneWay}"
+                                     DecodePixelHeight="200"
+                                     DecodePixelWidth="200" />
+                    </Image.Source>
+
+                    <media:UIElementExtensions.VisualFactory>
+                        <media:PipelineVisualFactory>
+                            <media:BlurEffect x:Name="ImageBlurEffect"
+                                              IsAnimatable="True" />
+                        </media:PipelineVisualFactory>
+                    </media:UIElementExtensions.VisualFactory>
+                    <animations:Explicit.Animations>
+                        <animations:AnimationSet x:Name="BlurAnimation">
+                            <animations:BlurEffectAnimation From="0"
+                                                            To="32"
+                                                            Duration="0:0:0.2"
+                                                            EasingType="Linear"
+                                                            EasingMode="EaseOut"
+                                                            Target="{Binding ElementName=ImageBlurEffect}" />
+                        </animations:AnimationSet>
+                        <animations:AnimationSet x:Name="UnblurAnimation">
+                            <animations:BlurEffectAnimation From="32"
+                                                            To="0"
+                                                            Duration="0:0:0.2"
+                                                            EasingType="Linear"
+                                                            EasingMode="EaseOut"
+                                                            Target="{Binding ElementName=ImageBlurEffect}" />
+                        </animations:AnimationSet>
+                    </animations:Explicit.Animations>
+                </Image>
+            </Border>
+        </Grid>
+        <TextBlock Text="{x:Bind Title, Mode=OneWay}"
+                   Margin="0,4,0,0"
+                   FontSize="14"
+                   MaxLines="2"
+                   FontWeight="SemiBold"
+                   Grid.Row="1"
+                   TextWrapping="WrapWholeWords" />
+        <ItemsControl Margin="-10,-4,0,0"
+                      ItemsSource="{x:Bind Subtitle, Mode=OneWay}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="models:DescriptionItem">
+                    <Button Style="{ThemeResource TextBlockButtonStyle}">
+                        <TextBlock FontSize="13"
+                                   Opacity=".7"
+                                   Text="{x:Bind Title}"
+                                   Tag="{x:Bind ExtraData}"
+                                   MaxLines="2"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,-2,0,4"
+                                   TextWrapping="WrapWholeWords" />
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>
